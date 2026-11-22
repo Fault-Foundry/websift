@@ -1,0 +1,10 @@
+{
+  "targets": ["https://your-authorized-domain.example"],
+  "request_interval_seconds": 1,
+  "timeout_seconds": 10,
+  "interval_hours": 24,
+  "max_body_bytes": 65536,
+  "max_consecutive_errors": 3,
+  "retention_days": 30,
+  "user_agent": "ExposureWatch/1.0 (authorized security testing)"
+}

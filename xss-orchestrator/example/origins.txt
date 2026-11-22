@@ -1,0 +1,3 @@
+# Exact allowed origins. Replace with origins permitted by the bounty program.
+https://app.example.com
+https://www.example.com

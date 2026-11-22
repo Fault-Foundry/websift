@@ -1,0 +1,16 @@
+# User service; edit paths if the project is installed elsewhere.
+[Unit]
+Description=Web vulnerability scanner Telegram bot
+
+[Service]
+Type=simple
+WorkingDirectory=%h/projects/web_vuln_scan
+ExecStart=%h/projects/web_vuln_scan/.venv/bin/python -u %h/projects/web_vuln_scan/bot.py
+Restart=on-failure
+RestartSec=10
+UMask=0077
+KillMode=control-group
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

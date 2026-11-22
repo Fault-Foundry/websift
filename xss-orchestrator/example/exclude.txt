@@ -1,0 +1,2 @@
+# Full-URL regex exclusions. Go/Rust compatible; no lookaround/backrefs.
+# Example: ^https://app\.example\.com/private(?:/|[?#]|$)
