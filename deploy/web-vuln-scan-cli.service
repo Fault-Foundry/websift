@@ -4,7 +4,7 @@ Description=Web vulnerability scanner CLI queue worker
 [Service]
 Type=simple
 WorkingDirectory=%h/projects/web_vuln_scan
-ExecStart=%h/projects/web_vuln_scan/.venv/bin/python -u %h/projects/web_vuln_scan/cli.py worker
+ExecStart=%h/projects/web_vuln_scan/.venv/bin/python -u %h/projects/web_vuln_scan/websift.py worker
 Restart=on-failure
 RestartSec=10
 UMask=0077

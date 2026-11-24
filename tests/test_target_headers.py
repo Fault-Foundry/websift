@@ -45,14 +45,14 @@ class TargetFormatTests(unittest.TestCase):
             store.close()
 
     def test_cli_file_headers_and_body(self):
-        import cli
+        import websift
         with tempfile.TemporaryDirectory() as directory:
             targets = Path(directory) / 'input.txt'
             targets.write_text('https://lab.test/\t{"User-Agent":"researcher"}')
             body = Path(directory) / 'body.txt'
             body.write_text('q=hello')
-            with patch('cli.load_dotenv'):
-                result = cli.main(['--queue-dir', directory, 'scan', '--file', str(targets), '--mode', 'sqli_check', '--data-file', str(body), '--enqueue'])
+            with patch('websift.load_dotenv'):
+                result = websift.main(['--queue-dir', directory, 'scan', '--file', str(targets), '--mode', 'sqli_check', '--data-file', str(body), '--enqueue'])
             self.assertEqual(result, 0)
             store = QueueStore(directory)
             job = store.claim()

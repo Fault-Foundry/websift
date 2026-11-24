@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import AsyncMock, patch
 
-import cli
+import websift
 from durable_queue import QueueStore, QueueWorker
 
 
@@ -21,8 +21,8 @@ class CLITests(unittest.TestCase):
         self.directory = self.tmp.name
         self.output = io.StringIO()
     def command(self, *args):
-        with patch('cli.load_dotenv'), contextlib.redirect_stdout(self.output), contextlib.redirect_stderr(self.output):
-            return cli.main(['--queue-dir', self.directory, *args])
+        with patch('websift.load_dotenv'), contextlib.redirect_stdout(self.output), contextlib.redirect_stderr(self.output):
+            return websift.main(['--queue-dir', self.directory, *args])
     def test_enqueue_and_management_work_while_worker_holds_lock(self):
         store = QueueStore(self.directory)
         try:
@@ -81,7 +81,7 @@ class NoTelegram(importlib.abc.MetaPathFinder):
         if fullname.split('.')[0] in ('aiogram', 'bot'):
             raise AssertionError('Telegram import: ' + fullname)
 sys.meta_path.insert(0, NoTelegram())
-import cli, scan_runner, scan_pipeline, durable_queue
+import websift, scan_runner, scan_pipeline, durable_queue
 '''
         result = subprocess.run([sys.executable, '-c', code], cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
