@@ -1,21 +1,46 @@
 # WebSift
 
-WebSift — сканер веб-приложений на Python с двумя интерфейсами: CLI и Telegram-ботом. Он собирает результаты проверок SQL-инъекций, XSS и нарушений контроля доступа в одном отчёте по каждому адресу. В отчёте видно, что обнаружил каждый движок, на чём основан вывод и какие находки стоит проверить вручную.
+WebSift is a Python CLI for web application security testing. It brings together SQL injection, cross-site scripting, and access control findings in one report per URL. Each report shows what each engine found, the evidence behind the finding, and which findings warrant manual review.
 
-## Какие данные собирает WebSift
+## Read a report from the CLI
 
-| Проверка | Что попадает в отчёт |
+List recent batches, then export the results for a completed batch. Replace `BATCH_ID` with the ID shown by the first command.
+
+```sh
+python3 cli.py queue
+python3 cli.py report BATCH_ID
+```
+
+The CLI prints the report and writes a text file and a JSON file for each completed job under `reports/<batch-id>/` in the CLI queue directory.
+
+This excerpt shows how a timeout appears in a JSON report:
+
+```json
+{
+  "url": "https://lab.test",
+  "results": {
+    "xss": {
+      "status": "incomplete",
+      "errors": ["timeout"]
+    }
+  }
+}
+```
+
+Here the XSS check timed out. Other checks have their own statuses and can still have findings for the same URL.
+
+## What WebSift records
+
+| Check | Evidence in the report |
 | --- | --- |
-| SQL-инъекции (SQLi) | Параметр запроса, тип инъекции и данные, по которым sqlmap определил уязвимость. |
-| Межсайтовый скриптинг (XSS) | Находки Dalfox и отражения введённых данных в ответе страницы. Для потенциального DOM XSS — источник данных и, когда он известен, участок JavaScript для разбора. |
-| Контроль доступа к объектам (IDOR) | Результаты обращения к одному объекту из сессий двух пользователей. Это позволяет сопоставить ответы с правилами доступа самого приложения. |
+| SQL injection (SQLi) | The request parameter, the injection type, and the evidence sqlmap used to identify the vulnerability. |
+| Cross-site scripting (XSS) | Dalfox findings and instances where the page reflects user input. For potential DOM-based XSS, the report includes the data source and, when available, the relevant JavaScript for review. |
+| Insecure direct object references (IDOR) | Responses from requests for the same object using two different user sessions. Reviewers can compare the observed behavior with the application's access rules. |
 
-Например, если два аккаунта могут открыть одну запись, ответ сервера сам по себе ещё не говорит, кому она должна принадлежать. WebSift сохраняет наблюдение как кандидата на IDOR. Решение о том, нарушены ли права доступа, остаётся за тем, кто проверяет приложение.
+For example, if two accounts can open the same record, the responses alone cannot establish who should have access. WebSift flags the observation as a potential IDOR. The reviewer checks it against the application's access rules to determine whether access was unauthorized.
 
-## От задания до отчёта
+## Telegram bot
 
-CLI и Telegram-бот передают задания одному ядру и используют общий формат отчёта. У каждого интерфейса своя очередь на диске. Пакет адресов можно поставить на паузу и продолжить позже. После прерывания обработчик начинает с адреса, на котором остановился.
+The Telegram bot provides a second interface to the same scan engine and report format. The bot and CLI each keep a separate queue on disk. Both support pausing and resuming batches. After an interruption, the worker resumes at the URL it was processing.
 
-У каждой проверки свой статус. Если движок завершился по тайм-ауту, в отчёте видна причина, а результаты остальных проверок можно читать отдельно. CLI сохраняет текстовую версию и структурированный JSON. Оба файла можно выгрузить повторно из сохранённых результатов.
-
-Подробности об устройстве движков — в [технических заметках](INTEGRATION.md). Примеры того, как WebSift отображает находки, пропуски и ошибки, есть в [тестах отчёта](tests/test_report_format.py).
+For details on how the engines work, see the [integration notes](INTEGRATION.md). The [report tests](tests/test_report_format.py) show how WebSift presents findings, skipped checks, and errors.
