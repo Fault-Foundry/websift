@@ -4,7 +4,7 @@
 
 ## Общая разведка и запуск
 
-`python bot.py` — бот. `shared_recon.py` управляет сессиями и разведкой, `scan_pipeline.py` — проверками и статусами. Старый независимый запуск Katana из SQLi заменён адаптером к общему слою.
+`python websift_tg_bot.py` — бот. `shared_recon.py` управляет сессиями и разведкой, `scan_pipeline.py` — проверками и статусами. Старый независимый запуск Katana из SQLi заменён адаптером к общему слою.
 
 Для каждой цели создаётся отдельный ReconService. Результат кешируется в пределах этого запуска по идентификатору сессии, cookies и headers. SQLi и XSS используют один результат A; IDOR получает отдельно A и B. Сканеры могут выполнять собственные запросы проверки: общий обход не означает, что каждую страницу посетят только один раз.
 
@@ -62,7 +62,7 @@ IDOR CLI: `python -m IDOR.idor_orchestrator --help` (также работает
 
 ```bash
 python -m unittest discover -s tests -v
-python -m compileall -q bot.py shared_recon.py scan_pipeline.py SQLi IDOR xss_bridge.py
+python -m compileall -q websift_tg_bot.py shared_recon.py scan_pipeline.py SQLi IDOR xss_bridge.py
 bash -n xss-orchestrator/run.sh
 ```
 
@@ -78,7 +78,7 @@ bash -n xss-orchestrator/run.sh
 ```bash
 .venv/bin/python -m pip install -r requirements-browser.txt
 .venv/bin/python -m playwright install chromium
-.venv/bin/python bot.py
+.venv/bin/python websift_tg_bot.py
 ```
 
 Существующий google-chrome/chromium выбирается автоматически, поэтому установка Chromium необязательна при совместимом системном браузере. `BROWSER_EXECUTABLE` — необязательное переопределение пути. `BROWSER_AUTH_TIMEOUT` по умолчанию 90 секунд.

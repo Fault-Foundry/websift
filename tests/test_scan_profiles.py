@@ -28,7 +28,7 @@ class ProfileTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(current_profile(), 'bounty')
 
     async def test_queued_profile_reaches_scanner(self):
-        from bot import scan_queued_job
+        from websift_tg_bot import scan_queued_job
         seen = []
         async def pipeline(*args, **kwargs):
             seen.append(Limits.load().interval)
@@ -40,7 +40,7 @@ class ProfileTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(seen, [0.1, 1])
 
     async def test_profile_selection_precedes_credentials(self):
-        from bot import save_urls_and_ask_creds, choose_profile, ScanStates
+        from websift_tg_bot import save_urls_and_ask_creds, choose_profile, ScanStates
         state, message = AsyncMock(), AsyncMock()
         await save_urls_and_ask_creds(message, state, 'all', ['https://lab.test/'])
         state.set_state.assert_awaited_with(ScanStates.waiting_for_profile)

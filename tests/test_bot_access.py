@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import AsyncMock
 from aiogram import Bot, Dispatcher, Router
 from aiogram.types import Update
-from bot import AccessMiddleware, parse_allowed_users
+from websift_tg_bot import AccessMiddleware, parse_allowed_users
 
 
 class AccessTests(unittest.IsolatedAsyncioTestCase):

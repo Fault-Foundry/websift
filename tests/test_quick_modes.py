@@ -51,7 +51,7 @@ class QuickModeTests(unittest.IsolatedAsyncioTestCase):
                 self.assertFalse(scope.search(url))
 
     async def test_help_and_commands(self):
-        import bot
+        import websift_tg_bot as bot
         message = AsyncMock()
         await bot.start(message)
         text = message.answer.call_args.args[0]
@@ -61,6 +61,6 @@ class QuickModeTests(unittest.IsolatedAsyncioTestCase):
         for command in ('sqli_check','xss_check','idor_check'):
             self.assertIn('/'+command,message.answer.call_args.args[0])
         message.text = '/xss_check@scanner_bot https://example.test/page'
-        with patch('bot.save_urls_and_ask_creds',new_callable=AsyncMock) as save:
+        with patch('websift_tg_bot.save_urls_and_ask_creds',new_callable=AsyncMock) as save:
             await bot.handle_quick_command(message,AsyncMock())
             self.assertEqual(save.call_args.args[2:4],('xss_check',['https://example.test/page']))

@@ -11,7 +11,7 @@ List recent batches, then export the results for a completed batch. Replace `BAT
 ./websift report BATCH_ID
 ```
 
-You can also run the CLI as `python3 websift.py`. The previous `python3 cli.py` entry point remains available for existing scripts.
+You can also run the CLI as `python3 websift.py`.
 
 The CLI prints the report and writes a text file and a JSON file for each completed job under `reports/<batch-id>/` in the CLI queue directory.
 
@@ -43,6 +43,6 @@ For example, if two accounts can open the same record, the responses alone canno
 
 ## Telegram bot
 
-The Telegram bot uses the same scan engine and sends the plain-text report to the chat. The CLI also exports structured JSON. In the bot, only the explicit choice `defaults` selects the configured accounts. Entering one account leaves the second account empty. The bot and CLI each keep a separate queue on disk. Both support pausing and resuming batches. After an interruption, the worker resumes at the URL it was processing.
+Run the bot with `python3 websift_tg_bot.py`. The Telegram bot uses the same scan engine and sends the plain-text report to the chat. The CLI also exports structured JSON. In the bot, only the explicit choice `defaults` selects the configured accounts. Entering one account leaves the second account empty. The bot and CLI each keep a separate queue on disk. Both support pausing and resuming batches. After an interruption, the worker resumes at the URL it was processing.
 
 For details on how the engines work, see the [integration notes](INTEGRATION.md). The [report tests](tests/test_report_format.py) show how WebSift presents findings, skipped checks, and errors.

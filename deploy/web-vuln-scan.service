@@ -5,7 +5,7 @@ Description=Web vulnerability scanner Telegram bot
 [Service]
 Type=simple
 WorkingDirectory=%h/projects/web_vuln_scan
-ExecStart=%h/projects/web_vuln_scan/.venv/bin/python -u %h/projects/web_vuln_scan/bot.py
+ExecStart=%h/projects/web_vuln_scan/.venv/bin/python -u %h/projects/web_vuln_scan/websift_tg_bot.py
 Restart=on-failure
 RestartSec=10
 UMask=0077

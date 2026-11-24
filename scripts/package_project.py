@@ -3,7 +3,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 ROOT = Path(__file__).resolve().parents[1]
 TOP = ['README.md', 'INTEGRATION.md', '.env.example', '.gitignore',
-       'requirements.txt', 'requirements-cli.txt', 'requirements-browser.txt', 'websift', 'websift.py', 'cli.py', 'scan_runner.py', 'bot.py', 'browser_auth.py',
+       'requirements.txt', 'requirements-cli.txt', 'requirements-browser.txt', 'websift', 'websift.py', 'scan_runner.py', 'websift_tg_bot.py', 'browser_auth.py',
        'browser_xss.py', 'durable_queue.py', 'scan_safety.py', 'cookie_session.py', 'shared_recon.py', 'scan_pipeline.py', 'xss_bridge.py']
 PATTERNS = ['SQLi/*.py', 'IDOR/*.py', 'tests/*.py', 'scripts/*.py', 'deploy/*.service',
             'xss-orchestrator/*.py', 'xss-orchestrator/*.sh', 'xss-orchestrator/*.md',

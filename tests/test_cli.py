@@ -78,7 +78,7 @@ class CLITests(unittest.TestCase):
 import importlib.abc, sys
 class NoTelegram(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, *args):
-        if fullname.split('.')[0] in ('aiogram', 'bot'):
+        if fullname.split('.')[0] in ('aiogram', 'websift_tg_bot'):
             raise AssertionError('Telegram import: ' + fullname)
 sys.meta_path.insert(0, NoTelegram())
 import websift, scan_runner, scan_pipeline, durable_queue

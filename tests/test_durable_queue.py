@@ -144,10 +144,10 @@ class WorkerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([r['status'] for r in rows], ['done', 'done'])
 
     async def test_all_keeps_other_engines_when_sqlmap_cannot_start(self):
-        from bot import scan_queued_job
+        from websift_tg_bot import scan_queued_job
         engine = AsyncMock()
         engine.__aenter__.side_effect = RuntimeError('unavailable')
-        with patch('bot.SqlmapClient', return_value=engine), \
+        with patch('websift_tg_bot.SqlmapClient', return_value=engine), \
              patch('scan_pipeline.run_pipeline', AsyncMock(return_value={'sqli': {'status': 'error'}})) as pipeline:
             await scan_queued_job({'url': 'https://lab.test/', 'mode': 'all',
                                    'credentials': '["", "", "", ""]'})

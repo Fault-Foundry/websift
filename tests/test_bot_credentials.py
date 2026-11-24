@@ -2,7 +2,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
-import bot
+import websift_tg_bot as bot
 
 
 class BotCredentialTests(unittest.IsolatedAsyncioTestCase):

@@ -181,13 +181,13 @@ class ProcessTests(unittest.IsolatedAsyncioTestCase):
 class BotWatchTests(unittest.IsolatedAsyncioTestCase):
     async def test_registration_skips_profile_and_credentials(self):
         from types import SimpleNamespace
-        from bot import save_urls_and_ask_creds
+        from websift_tg_bot import save_urls_and_ask_creds
         message, state = AsyncMock(), AsyncMock()
         message.from_user.id, message.chat.id = 7, 7
         with tempfile.TemporaryDirectory() as directory:
             queue = QueueStore(directory)
             try:
-                with patch('bot.queue_worker', SimpleNamespace(store=queue)):
+                with patch('websift_tg_bot.queue_worker', SimpleNamespace(store=queue)):
                     await save_urls_and_ask_creds(message, state, 'watch', ['https://example.test/'])
                 self.assertEqual(len(queue.watches.rows(7, 7)), 1)
                 state.clear.assert_awaited_once()
