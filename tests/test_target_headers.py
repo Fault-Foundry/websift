@@ -51,7 +51,7 @@ class TargetFormatTests(unittest.TestCase):
             targets.write_text('https://lab.test/\t{"User-Agent":"researcher"}')
             body = Path(directory) / 'body.txt'
             body.write_text('q=hello')
-            with patch('websift.load_dotenv'):
+            with patch('dotenv.load_dotenv'):
                 result = websift.main(['--queue-dir', directory, 'scan', '--file', str(targets), '--mode', 'sqli_check', '--data-file', str(body), '--enqueue'])
             self.assertEqual(result, 0)
             store = QueueStore(directory)

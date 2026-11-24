@@ -2,16 +2,24 @@
 
 WebSift is a Python CLI for web application security testing. It brings together SQL injection, cross-site scripting, and access control findings in one report per URL. Each report shows what each engine found, the evidence behind the finding, and which findings warrant manual review.
 
+## Open the CLI
+
+From the repository directory, run `./websift` to see the commands. You can also use `python3 websift.py`. Help is available before installing dependencies.
+
+```sh
+./websift -help
+./websift queue --help
+```
+
 ## Read a report from the CLI
 
-List recent batches, then export the results for a completed batch. Replace `BATCH_ID` with the ID shown by the first command.
+The queue command lists existing CLI batches and their statuses. On first use, an empty queue is expected. Once a batch has completed jobs, you can export their results. Replace `BATCH_ID` with the ID shown by the first command.
 
 ```sh
 ./websift queue
 ./websift report BATCH_ID
 ```
 
-You can also run the CLI as `python3 websift.py`.
 
 The CLI prints the report and writes a text file and a JSON file for each completed job under `reports/<batch-id>/` in the CLI queue directory.
 

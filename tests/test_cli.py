@@ -21,7 +21,7 @@ class CLITests(unittest.TestCase):
         self.directory = self.tmp.name
         self.output = io.StringIO()
     def command(self, *args):
-        with patch('websift.load_dotenv'), contextlib.redirect_stdout(self.output), contextlib.redirect_stderr(self.output):
+        with patch('dotenv.load_dotenv'), contextlib.redirect_stdout(self.output), contextlib.redirect_stderr(self.output):
             return websift.main(['--queue-dir', self.directory, *args])
     def test_enqueue_and_management_work_while_worker_holds_lock(self):
         store = QueueStore(self.directory)

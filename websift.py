@@ -7,17 +7,27 @@ import os
 from pathlib import Path
 import signal
 import sys
-from dotenv import load_dotenv
+
 
 BASE = Path(__file__).resolve().parent
 
 
+class HelpParser(argparse.ArgumentParser):
+    def __init__(self, **kwargs):
+        super().__init__(add_help=False, **kwargs)
+        self.add_argument('-h', '--help', '-help', action='help', help='Show this help and exit.')
+
+
 def parser():
-    root = argparse.ArgumentParser(description='WebSift — CLI без Telegram')
-    root.add_argument('--queue-dir', default=os.environ.get('CLI_QUEUE_DIR', str(BASE / 'cli_queue_data')),
-                      help='каталог CLI-очереди (перед подкомандой)')
+    root = HelpParser(
+        prog='websift',
+        description='WebSift CLI for web application security testing and report review.',
+        epilog='Use "websift COMMAND --help" for help with a specific command.',
+    )
+    root.add_argument('--queue-dir', default=None,
+                      help='CLI queue directory (before the command).')
     sub = root.add_subparsers(dest='command', required=True)
-    scan = sub.add_parser('scan', help='проверить URL/файл или добавить пакет в очередь')
+    scan = sub.add_parser('scan', help='Start a scan or enqueue a batch.')
     scan.add_argument('urls', nargs='*')
     scan.add_argument('--file', type=Path)
     scan.add_argument('--mode', choices=['exposure', 'all', 'sqli', 'xss', 'idor', 'sqli_check', 'xss_check', 'idor_check'], default='all')
@@ -28,16 +38,23 @@ def parser():
     auth.add_argument('--auth', action='store_true', help='интерактивный ввод логинов/паролей')
     auth.add_argument('--defaults', action='store_true', help='DEFAULT_USER/PASS_A/B из .env')
     auth.add_argument('--credentials-file', type=Path, help='JSON-массив [userA,passA,userB,passB]')
-    watch = sub.add_parser('watch', help='управление наблюдением (bounty)')
+    watch = sub.add_parser('watch', help='Manage saved watches.')
     watch.add_argument('action', choices=['add', 'list', 'pause', 'resume', 'remove'])
     watch.add_argument('targets', nargs='*', help='URL для add, ID для управления')
     watch.add_argument('--file', type=Path)
-    sub.add_parser('queue', help='последние десять пакетов')
-    worker = sub.add_parser('worker', help='обслуживать сохранённую очередь')
+    sub.add_parser('queue', help='List recent CLI batches and their statuses.',
+                   description='List the ten most recent batches in the local CLI queue and their statuses. '
+                               'An empty queue means there are no batches to display.')
+    worker = sub.add_parser('worker', help='Process jobs in the saved queue.')
     worker.add_argument('--once', action='store_true', help='завершиться, когда очередь обработана/приостановлена')
-    for name in ('pause', 'resume', 'cancel', 'report'):
-        item = sub.add_parser(name)
-        item.add_argument('batch')
+    for name, summary in (
+        ('pause', 'Pause a batch.'),
+        ('resume', 'Resume a paused batch.'),
+        ('cancel', 'Cancel a batch.'),
+        ('report', 'Export completed results for a batch as text and JSON.'),
+    ):
+        item = sub.add_parser(name, help=summary, description=summary)
+        item.add_argument('batch', metavar='BATCH_ID', help='Batch ID shown by the queue command.')
     return root
 
 
@@ -117,8 +134,17 @@ async def run_worker(store, directory, *, batch=None, once=False):
 
 
 def main(argv=None):
+    cli = parser()
+    arguments = sys.argv[1:] if argv is None else argv
+    if not arguments:
+        cli.print_help()
+        return 0
+    args = cli.parse_args(arguments)
+
+    from dotenv import load_dotenv
     load_dotenv(BASE / '.env')
-    args = parser().parse_args(argv)
+    if args.queue_dir is None:
+        args.queue_dir = os.environ.get('CLI_QUEUE_DIR', str(BASE / 'cli_queue_data'))
     from durable_queue import QueueStore
     owns_worker = args.command == 'worker' or (args.command == 'scan' and not args.enqueue)
     store = None
