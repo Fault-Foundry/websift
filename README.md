@@ -41,6 +41,6 @@ For example, if two accounts can open the same record, the responses alone canno
 
 ## Telegram bot
 
-The Telegram bot provides a second interface to the same scan engine and report format. The bot and CLI each keep a separate queue on disk. Both support pausing and resuming batches. After an interruption, the worker resumes at the URL it was processing.
+The Telegram bot uses the same scan engine and sends the plain-text report to the chat. The CLI also exports structured JSON. In the bot, only the explicit choice `defaults` selects the configured accounts. Entering one account leaves the second account empty. The bot and CLI each keep a separate queue on disk. Both support pausing and resuming batches. After an interruption, the worker resumes at the URL it was processing.
 
 For details on how the engines work, see the [integration notes](INTEGRATION.md). The [report tests](tests/test_report_format.py) show how WebSift presents findings, skipped checks, and errors.

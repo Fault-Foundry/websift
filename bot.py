@@ -339,24 +339,23 @@ async def handle_unexpected_input(message: Message) -> None:
 @router.message(ScanStates.waiting_for_creds, F.text)
 async def handle_creds_input(message: Message, state: FSMContext, bot: Bot) -> None:
     text = message.text.strip()
+    credentials = ["", "", "", ""]
+    if text == "defaults":
+        credentials = [DEFAULT_USER_A, DEFAULT_PASS_A, DEFAULT_USER_B, DEFAULT_PASS_B]
+        if any(bool(credentials[i]) != bool(credentials[i + 1]) for i in (0, 2)):
+            await message.reply("В настройках неполная пара логина и пароля. Выбери другой способ входа.")
+            return
+    elif text != "-":
+        pairs = [part.partition(":") for part in text.split()]
+        if not 1 <= len(pairs) <= 2 or any(not user or not password for user, _, password in pairs):
+            await message.reply("Введи одну или две пары user:pass, defaults или -.")
+            return
+        for i, (user, _, password) in enumerate(pairs):
+            credentials[2 * i:2 * i + 2] = [user, password]
+
     data = await state.get_data()
-    urls = data.get("urls", [])
-    mode = data.get("mode", "all")
     await state.clear()
-
-    user_a, pass_a = DEFAULT_USER_A, DEFAULT_PASS_A
-    user_b, pass_b = DEFAULT_USER_B, DEFAULT_PASS_B
-
-    if text == "-":
-        user_a = pass_a = user_b = pass_b = ""
-    elif text != "defaults":
-        parts = text.split()
-        if len(parts) >= 1 and ":" in parts[0]:
-            user_a, pass_a = parts[0].split(":", 1)
-        if len(parts) >= 2 and ":" in parts[1]:
-            user_b, pass_b = parts[1].split(":", 1)
-
-    await enqueue_scan(message, data, [user_a, pass_a, user_b, pass_b])
+    await enqueue_scan(message, data, credentials)
 
 
 async def enqueue_scan(message, data, credentials):
